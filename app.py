@@ -1,70 +1,64 @@
 import streamlit as st
 import joblib
-import numpy as np
 
-# Load the pre-trained models
-rf_model = joblib.load('rf_model.pkl')  # Random Forest model for SMS spam detection
-cv = joblib.load('CountVector.pkl')  # CountVectorizer used to transform SMS text
+# Load model and vectorizer
+model = joblib.load('rf_model.pkl')
+vectorizer = joblib.load('CountVector.pkl')
 
-# Function to predict whether an SMS is spam or not
-def predict_sms(text):
-    # Transform the input SMS text using the CountVectorizer
-    text_features = cv.transform([text])
-    
-    # Make prediction with the Random Forest model
-    prediction = rf_model.predict(text_features)
-    
-    # Return prediction result
-    return prediction[0]
+# Page config
+st.set_page_config(page_title="SMS Spam Detector", page_icon="📱", layout="centered")
 
-# Function to explain why it's considered spam or not
-def explain_prediction(result):
-    if result == 1:
-        return "This SMS contains certain keywords and patterns commonly associated with spam messages, such as unsolicited offers or requests for personal information."
+# Custom Header
+st.markdown(
+    """
+    <div style="text-align:center;">
+        <h1 style="color:#4CAF50;">📱 SMS Spam Detector</h1>
+        <p style="font-size:18px;">Easily check whether an SMS message is <strong style="color:red;">spam</strong> or <strong style="color:green;">safe</strong>.</p>
+    </div>
+    """, unsafe_allow_html=True
+)
+
+# Styling box
+st.markdown(
+    """
+    <style>
+    .stTextArea > div > textarea {
+        font-size: 16px;
+        height: 150px;
+    }
+    .stButton > button {
+        background-color: #4CAF50;
+        color: white;
+        font-size: 16px;
+        padding: 0.6em 1em;
+        border-radius: 10px;
+    }
+    </style>
+    """, unsafe_allow_html=True
+)
+
+# Input Section
+user_input = st.text_area("📩 Enter your SMS message below:")
+
+if st.button("🔍 Analyze"):
+    if user_input.strip() == "":
+        st.warning("Please enter a message to analyze.")
     else:
-        return "This SMS appears to be a legitimate message, as it lacks patterns or content typically found in spam messages."
+        # Vectorize and predict
+        message_vector = vectorizer.transform([user_input])
+        prediction = model.predict(message_vector)[0]
+        confidence = model.predict_proba(message_vector).max() * 100
 
-# Streamlit UI
-st.title("SMS Spam Filter")
-st.markdown("""
-    This app checks whether the provided SMS is spam or not. 
-    Enter an SMS text and we will classify it for you.
-""")
-
-# Input SMS text from the user
-sms_input = st.text_area("Enter SMS text here:")
-
-# Add a button to start processing
-if st.button("Check SMS"):
-    if sms_input:
-        # Process the SMS text when the button is clicked
-        st.info("The model is processing your input to detect if it is spam or not...")
-        
-        # Make the prediction
-        result = predict_sms(sms_input)
-        
-        # Display result
-        if result == 1:
-            st.warning("Warning: This SMS is detected as spam!")
+        if prediction == 1:
+            st.error(f"🚨 This message is likely **SPAM** with {confidence:.2f}% confidence.")
+            st.markdown("**💡 Tip:** Avoid clicking on unknown links or replying to suspicious messages.")
         else:
-            st.success("This SMS is not spam. It's safe!")
-        
-        # Explain why it's considered spam or not
-        explanation = explain_prediction(result)
-        st.write(f"**Explanation:** {explanation}")
-        
-        # Provide instructions for the user
-        if result == 1:
-            st.write("""
-                **What to do next:**
-                - You can ignore or block this SMS.
-                - If you suspect this message is from a legitimate source, verify the information directly with the sender.
-            """)
-        else:
-            st.write("""
-                **What to do next:**
-                - Feel free to engage with the sender.
-                - If the message is important, you can save it for future reference.
-            """)
-    else:
-        st.error("Please enter an SMS text to check.")
+            st.success(f"✅ This message appears to be **SAFE** with {confidence:.2f}% confidence.")
+            st.markdown("**👍 You're good to go!**")
+
+# Footer
+st.markdown("---")
+st.markdown(
+    "<p style='text-align:center;font-size:14px;'>Built with ❤️ using Streamlit</p>",
+    unsafe_allow_html=True
+)
