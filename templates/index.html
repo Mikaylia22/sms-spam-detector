@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SMS Spam Detector</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+      overflow-x: hidden;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: white;
+      padding: 10px 30px;
+      border-bottom: 2px solid #6a0dad;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar img {
+      height: 50px;
+      border-radius: 10px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #6a0dad;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .nav-links a:hover {
+      text-decoration: underline;
+    }
+
+    /* Welcome Screen */
+    .welcome-screen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 10;
+      transition: opacity 1s ease, visibility 1s ease;
+    }
+
+    .welcome-screen h1 {
+      font-family: 'Pacifico', cursive;
+      font-size: 48px;
+      color: #7b2cbf;
+      margin-bottom: 20px;
+    }
+
+    .welcome-screen button {
+      background-color: #ff66b2;
+      border: none;
+      padding: 12px 24px;
+      font-size: 18px;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .welcome-screen.hide {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+      overflow: auto;
+    }
+
+    .sidebar {
+      width: 280px;
+      background-color: #fff;
+      padding: 20px;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar img {
+      width: 100%;
+      border-radius: 12px;
+    }
+
+    .sidebar h3 {
+      margin-top: 20px;
+      font-weight: 600;
+    }
+
+    .main {
+      flex-grow: 1;
+      padding: 40px;
+      position: relative;
+    }
+
+    h1.title {
+      text-align: center;
+      font-family: 'Pacifico', cursive;
+      font-size: 36px;
+      color: #6a0dad;
+      margin-bottom: 30px;
+    }
+
+    .form-section {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 12px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: #fff0f6;
+    }
+
+    button {
+      background-color: #ff66b2;
+      border: none;
+      padding: 12px 20px;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+
+    th {
+      background-color: #ffe0f0;
+      font-weight: 600;
+    }
+
+    .result-bubble {
+      background: #fff0f6;
+      padding: 20px;
+      border-radius: 16px;
+      font-size: 18px;
+      margin-top: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 14px;
+      color: #666;
+      padding: 20px;
+    }
+
+    .thinking {
+      display: none;
+      text-align: center;
+      font-size: 18px;
+      color: #ff69b4;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 🌟 Navbar -->
+<div class="navbar">
+    <img src="{{ url_for('static', filename='images/ucc_logo.jpg') }}" alt="UCC logo">
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="#about">About Us</a>
+    <a href="#help">Help</a>
+  </div>
+</div>
+
+<!-- 💻 App Layout -->
+<div class="container">
+  <div class="sidebar">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh8PDON9k-3VWFD6MCE9HN22wxkfenDSIY8w&s" alt="Avatar">
+    <h3>Author: Mickaylia M</h3>
+    <p>Project: SMS Spam Detection using Machine Learning, Flask & PythonAnywhere</p>
+  </div>
+  <div class="main">
+    <h1 class="title">SMS Spam Detector</h1>
+    <div class="form-section">            <label for="number"><strong>From:</strong></label>
+        <input type="text" id="number" name="number" placeholder="e.g. 1234567890" required>
+
+        <label for="message"><strong>Body:</strong></label>
+        <textarea id="message" name="message" rows="4" placeholder="Enter SMS message here..." required></textarea>
+
+        <button type="submit">Detect</button>
+      {% if result %}
+      <div class="result-bubble">
+        <div><strong>{{ prediction }}</strong><br>{{ suggestion }}</div>
+        {% if result_class == 'spam' %}
+          <div>⚠️</div>
+        {% else %}
+          <div>✅</div>
+        {% endif %}
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>Body</th>
+            <th>Prediction</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ number }}</td>
+            <td>{{ message }}</td>
+            <td>{{ prediction }}</td>
+          </tr>
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+
+    <!-- 🌐 Info Sections -->
+      Made with 💖 by Mickaylia M
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

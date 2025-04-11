@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome | SMS Spam Detector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-image: url('https://images.unsplash.com/photo-1524250504084-8e49c0a6d6c7?auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Pacifico', cursive;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .overlay {
+            backdrop-filter: blur(10px);
+            background-color: rgba(255, 192, 203, 0.2);
+            border-radius: 20px;
+            padding: 60px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #ff69b4;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        button {
+            font-family: 'Pacifico', cursive;
+            padding: 12px 30px;
+            font-size: 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: #ff69b4;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        button:hover {
+            transform: scale(1.1);
+            background-color: #ff85c1;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <h1>Welcome to SMS Spam Detector 💌</h1>
+        <form action="/detect">
+            <button type="submit">Let's Start!</button>
+        </form>
+    </div>
+</body>
+</html>
+```
+
+
+**index.html (Main App Page)**
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SMS Spam Detector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            background: linear-gradient(120deg, #ffe4ec, #fbeaff);
+            color: #333;
+        }
+
+        .sidebar {
+            width: 280px;
+            background-color: #fff0f5;
+            border-right: 1px solid #ffb6c1;
+            padding: 20px;
+            box-shadow: 2px 0 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar img {
+            width: 100%;
+            border-radius: 12px;
+        }
+
+        .sidebar h3 {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .sidebar p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .main {
+            flex-grow: 1;
+            padding: 40px;
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            text-align: center;
+            font-size: 36px;
+            color: #ff69b4;
+        }
+
+        .about,
+        .instructions {
+            margin-bottom: 25px;
+        }
+
+        .form-section {
+            margin-top: 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        button {
+            padding: 10px 18px;
+            background-color: #ff69b4;
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ff85c1;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .footer span {
+            color: #ff4d6d;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f1f1f1;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .thinking-bubble {
+            display: none;
+            font-size: 18px;
+            color: #ff69b4;
+            margin-bottom: 20px;
+            animation: blink 1s infinite;
+            text-align: center;
+        }
+
+        @keyframes blink {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+    </style>
+    <script>
+        function showThinking() {
+            document.getElementById("thinking").style.display = "block";
+            setTimeout(() => {
+                document.getElementById("spam-form").submit();
+            }, 1500);
+            return false;
+        }
+    </script>
+</head>
+<body>
+<div class="sidebar">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQh8PDON9k-3VWFD6MCE9HN22wxkfenDSIY8w&s" alt="Avatar">
+    <h3>Author: Mickaylia</h3>
+    <p>Project: SMS spam detection using Machine Learning, Flask & PythonAnywhere</p>
+</div>
+<div class="main">
+    <h1>SMS Spam Detector</h1>
+    <div class="about">
+        <h2>About</h2>
+        <p>This spam detection app helps you identify whether an SMS message is spam or safe. Powered by machine learning, it offers fast and smart predictions with a vibrant interface.</p>
+    </div>
+    <div class="instructions">
+        <h2>Instructions</h2>
+        <p>Enter the phone number and message you’d like to test below, then hit "Detect". We’ll let you know if it's spam or not.</p>
+    </div>
+
+    <div class="form-section">
+        <form id="spam-form" method="post" action="/predict" onsubmit="return showThinking();">
+            <div id="thinking" class="thinking-bubble">🤔 Thinking...</div>
+
+            <label for="number">From:</label>
+            <input type="text" id="number" name="number" placeholder="e.g. 1234567890" required>
+
+            <label for="message">Body:</label>
+            <textarea id="message" name="message" rows="4" placeholder="Enter SMS message here..." required></textarea>
+
+            <button type="submit">Detect</button>
+        </form>
+
+        {% if prediction %}
+        <table>
+            <thead>
+                <tr>
+                    <th>From</th>
+                    <th>Body</th>
+                    <th>Prediction</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ number }}</td>
+                    <td>{{ message }}</td>
+                    <td>{{ prediction }}</td>
+                </tr>
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    <div class="footer">
+        <p>Made with <span>💖</span> by Mickaylia M</p>
+    </div>
+</div>
+</body>
+</html>
